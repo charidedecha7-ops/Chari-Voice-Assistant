@@ -1,0 +1,7 @@
+{
+  "name": "Chari Voice Assistant",
+  "description": "A real-time multilingual Ethiopian voice assistant powered by Gemini Live API, created by Chari Dedecha, an AI Engineer from Ethiopia. It supports Afaan Oromo, Amharic, and English.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
