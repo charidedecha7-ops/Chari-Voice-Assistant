@@ -1,13 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { ConversationMessage, SessionStatus } from '../types';
-
-interface ConversationUIProps {
-  messages: ConversationMessage[];
-  status: SessionStatus;
-  onStart: () => void;
-  onStop: () => void;
-  errorMessage: string | null;
-}
+import { ConversationMessage, SessionStatus, ConversationUIProps } from '../types';
 
 const ConversationUI: React.FC<ConversationUIProps> = ({ messages, status, onStart, onStop, errorMessage }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -40,8 +32,23 @@ const ConversationUI: React.FC<ConversationUIProps> = ({ messages, status, onSta
       {/* Header */}
       <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md z-10">
         <h1 className="text-2xl font-bold text-center">Chari Voice Assistant</h1>
-        <p className="text-sm text-center opacity-90">Powered by Gemini Live API by Chari Dedecha</p>
       </div>
+
+      {/* Assistant Image - Shows during conversation */}
+      {isListeningOrSpeaking && (
+        <div className="flex justify-center items-center p-4 bg-gradient-to-b from-gray-100 to-white">
+          <div className="relative">
+            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg border-4 border-blue-500 animate-pulse">
+              <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+              </svg>
+            </div>
+            <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-2 shadow-lg">
+              <div className="w-3 h-3 bg-white rounded-full animate-ping"></div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Message Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-white scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
@@ -80,22 +87,26 @@ const ConversationUI: React.FC<ConversationUIProps> = ({ messages, status, onSta
 
       {/* Footer / Control */}
       <div className="p-4 bg-gray-100 border-t border-gray-200 sticky bottom-0 z-10">
-        <div className="flex items-center justify-between mb-3">
-          <span className={`text-sm font-medium ${
-            status === SessionStatus.ERROR ? 'text-red-600' :
-            status === SessionStatus.LISTENING ? 'text-green-600' :
-            status === SessionStatus.SPEAKING ? 'text-purple-600' :
-            'text-gray-600'
-          }`}>
-            Status: {getStatusText(status)}
-          </span>
-          {isListeningOrSpeaking && (
-            <div className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </div>
-          )}
-        </div>
+        {status !== SessionStatus.IDLE && (
+          <div className="flex items-center justify-between mb-3">
+            <span className={`text-sm font-medium ${
+              status === SessionStatus.ERROR ? 'text-red-600' :
+              status === SessionStatus.LISTENING ? 'text-green-600' :
+              status === SessionStatus.SPEAKING ? 'text-purple-600' :
+              'text-gray-600'
+            }`}>
+              Status: {getStatusText(status)}
+            </span>
+            {isListeningOrSpeaking && (
+              <div className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Voice Control Button */}
         <button
           onClick={isListeningOrSpeaking ? onStop : onStart}
           disabled={isDisabled}
@@ -106,7 +117,7 @@ const ConversationUI: React.FC<ConversationUIProps> = ({ messages, status, onSta
             ${isDisabled ? 'opacity-60 cursor-not-allowed' : 'shadow-lg'}
           `}
         >
-          {isListeningOrSpeaking ? 'Stop Conversation' : 'Start Conversation'}
+          {isListeningOrSpeaking ? '🎤 Stop Voice Conversation' : '🎤 Start Voice Conversation'}
         </button>
       </div>
     </div>

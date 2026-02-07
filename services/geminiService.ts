@@ -278,3 +278,28 @@ function cleanupAudio(): void {
   currentInputTranscription = '';
   currentOutputTranscription = '';
 }
+
+// Text-based chat function using Gemini API
+export async function sendTextMessage(text: string, file?: File): Promise<string> {
+  try {
+    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
+    const model = ai.getGenerativeModel({ 
+      model: 'gemini-2.0-flash-exp',
+      systemInstruction: SYSTEM_INSTRUCTION
+    });
+
+    let prompt = text;
+    
+    // If file is provided, handle it (for now, just mention it)
+    if (file) {
+      prompt = `[User attached file: ${file.name}]\n\n${text}`;
+    }
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    return response.text();
+  } catch (error) {
+    console.error('Error sending text message:', error);
+    throw new Error(`Failed to get response: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}

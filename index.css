@@ -27,7 +27,7 @@ html, body, #root {
 }
 
 .bg-gradient-to-r {
-  background: linear-gradient(to right, #2563eb, #4338ca);
+  background: linear-gradient(to right, #e8eb25, #ca3866);
 }
 
 .text-white {
